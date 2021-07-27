@@ -1,0 +1,114 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Home Page</title>
+
+    <link rel="stylesheet" href=" {% static 'css/styles.css' %}">
+    <link rel="icon" href="{% static 'images/UI/favicon1.ico' %}">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="JavaScript" href="{% static '/js/index.js' %}" />
+    <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+</head>
+
+<body class="bBody">
+    {%load static%}
+    <!-- rgb(227, 254, 255); -->
+    <nav class="navbar  navbar-fixed-top" style="background-color: rgb(227, 254, 255); padding: 5px 0px; margin: 0px 0px; box-shadow: 2px 2px rgba(134, 133, 133, 0.1);">
+        <div class="container-fluid">
+
+            <div class="navbar-header">
+                <a href="{% url 'feed' %}" class="navbar-left">
+                    <!--<span class="glyphicon glyphicon-search"></span>-->
+                    <img src="{% static 'images/UI/logo.png' %}" width="auto" height="50px"></a>
+            </div>
+
+            <div class="collapse navbar-collapse navbar-right" id="navbarSupportedContent">
+
+                <ul class="nav navbar-nav float-left ml-auto">
+                    <li style="margin-top: 14px;">Hello, {{patient}}</li>
+                    <li><a href="{% url 'logout' %}">Logout <i class="fas fa-sign-out-alt"></i></span></a></li>
+                </ul>
+            </div>
+
+        </div>
+    </nav>
+
+    <div class="wrapper">
+
+        {% include 'BackEndApp/patientSidebar.html' %} {%block content%}
+        <div class="usableBody">
+            {%if person%}
+
+            <img name="img" src={{person.photo.url}} alt="profile-img" class="prof-img">
+
+            <div class="form-group" style="padding-top: 25px;">
+                <label for="name">Name </label>
+                <h5>{{person.fName}} {{person.lName}}</h5>
+            </div>
+            <hr>
+            <div class="form-group">
+                <label for="exampleInputPassword1">Phone#</label>
+                <h5>{{person.phone}}</h5>
+            </div>
+
+            <hr>
+            <div class="form-group">
+                <label for="exampleInputEmail1">Email address</label>
+                <h5>{{person.email}}</h5>
+                <!-- <small class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+            </div>
+            <hr>
+
+            <div class="form-group">
+                <label for="exampleInputEmail1">Address</label>
+                <h5>{{person.address}}</h5>
+            </div>
+            <hr>
+            <form action="/viewTrustedContact/" method="POST">
+                {%csrf_token%}
+                <button name="change" id="change" type="submit" class="btn btn-primary">Change</button>
+                <button name="remove" id="remove" type="submit" class="btn btn-primary">Remove</button>
+            </form>
+            <div>
+                {% else %}
+
+                <form action="/viewTrustedContact/" method="POST">
+                    <div class="sBar">
+                        {%csrf_token%}
+                        <input type="text" id="CNIC" name="CNIC" class="form-control" placeholder="Enter CNIC of Contact">
+                    </div>
+
+                    <div class="sBtn0">
+                        <button name="new" class="btn" type="submit">
+                    <i class="glyphicon glyphicon-plus"></i>
+                </button>
+                    </div>
+                </form>
+
+                {% endif %}
+            </div>
+            <div style="position: absolute; top: 55%; left: 44%">
+                {{form.errors}} {% for message in messages %}
+                <div style="
+                    color: rgb(228, 58, 58);
+                    height: 30px;
+                  ">
+                    <h5 style="padding-top: 5px">{{message}}</h5>
+                </div>
+                {% endfor %}
+            </div>
+            {%endblock%}
+
+</body>
+
+</html>

@@ -1,0 +1,171 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Timeline</title>
+
+    <!-- <link rel="JavaScript" href="login.js"> -->
+    <link rel="stylesheet" href=" {% static 'css/styles.css' %}">
+    <link rel="icon" href="{% static 'images/UI/favicon1.ico' %}">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="JavaScript" href="{% static '/js/index.js' %}" />
+    <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+
+
+
+    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css">
+
+    <script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+    <script type="" src="{% static 'js/index.js' %}" charset="utf-8"></script>
+
+
+</head>
+
+<body class="bBody">
+    <!-- rgb(227, 254, 255); -->
+    <nav class="navbar navbar-fixed-top" style="background-color: rgb(227, 254, 255); padding: 5px 0px; margin: 0px 0px; box-shadow: 2px 2px rgba(134, 133, 133, 0.1);">
+        <div class="container-fluid">
+
+            <div class="navbar-header">
+                <a href="{% url 'feed' %}" class="navbar-left">
+                    <img src="{% static 'images/UI/logo.png' %}" width="auto" height="50px"></a>
+            </div>
+
+            <div class="collapse navbar-collapse navbar-right" id="navbarSupportedContent">
+
+                <ul class="nav navbar-nav float-left ml-auto">
+                    <li style="margin-top: 15px;">Hello, {{user}}</li>
+                    <li><a href="{% url 'logout' %}">Logout <i class="fas fa-sign-out-alt"></i></span></a></li>
+                </ul>
+            </div>
+
+        </div>
+    </nav>
+
+    <div class="wrapper">
+        {% if patient %} {% include 'BackEndApp/patientSidebar.html' %} {% else %} {% include 'BackEndApp/DoctorSidebar.html' %} {%endif%}
+
+    </div>
+    {% block content %}
+    <div class="usableBody container" style="box-shadow: 0px 0px 0px 0px rgba(199, 199, 199, 0.2); border-radius: 0px; background-color:transparent;">
+
+
+        <div class="row" style="padding: 0.1%; 
+        box-shadow: 1.5px 1.5px 5px 5px rgba(199, 199, 199, 0.2);">
+
+            <div class="col-lg-8">
+                <h4>Summary</h4>
+                {{text}}<br><br>
+            </div>
+
+        </div>
+        <div class="row" style="margin-top: 3%;">
+            <div class="col-lg-5">
+                {% if not patient %}
+
+                <form action="/viewAllRecords/" method="POST">
+                    {% csrf_token %}
+                    <input class="btn btn-success" name="allRecords" id="allRecords" value="All Records" type="submit" />
+                </form>
+                <br><br> {% endif %}
+
+
+
+                <ul class="w3-ul w3-card-4">
+                    {%if data%} {% for x in data %}
+                    <div class="container" style="padding-top:10px; padding-bottom: 10px;">
+                        <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#{{x.0}}">{{x.0}}</button>
+                        <div id="{{x.0}}" class="collapse">
+                            <ul>
+                                {% for y in x %} {% if y != x.0 %}
+                                <div class="" style="margin-left: 6%; padding: 10px;  margin-top: 2%;">
+
+                                    <li>
+                                        <form action="/timeline/" method="POST">
+                                            {% csrf_token %}
+                                            <div class="input-group">
+                                                <input name="q" type="submit" class='btn btn-primary' placeholder="Search" value="{{y}} {{x.0}}" />
+                                            </div>
+                                        </form>
+
+                                    </li>
+                                </div>
+                                {% endif %} {% endfor %}
+                            </ul>
+
+                        </div>
+                    </div>
+
+                    {% endfor %} {%endif%} </ul> {%if not data%}
+
+                <ul class="w3-ul w3-card-4">
+
+                    <div class="container" style="padding-top:10px; padding-bottom: 10px;">
+                        <h3>No Record found</h3>
+                    </div>
+                </ul>
+
+                {%endif%}
+            </div>
+            <div class="col-lg-7">
+
+                <table class="table" id="prescriptions" style="background-color: rgba(227, 254, 255, 0.9);">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Label</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in sum%}
+                        <tr>
+                            <td>{{s.label}}</td>
+                            <td>{{s.description}}</td>
+                            <td>{{s.date}}</td>
+                            {% if s.hospital %}
+                            <td>
+                                <form id="form" action="/getPrescriptionFiles/" method="POST">
+                                    {%csrf_token%}
+                                    <button type="text" class="btn btn-sm btn-primary" name="serial" value="{{s.id}}">View</button>
+                                </form>
+                            </td>
+                            {%endif%} {% if s.laboratory %}
+                            <td>
+                                <form id="form" action="/getReportFiles/" method="POST">
+                                    {%csrf_token%}
+                                    <button type="text" class="btn btn-sm btn-primary" name="serial" value="{{s.id}}">View</button>
+                                </form>
+                            </td>
+                            {%endif%} {%endfor%} {%endblock%}
+                    </tbody>
+            </div>
+
+        </div>
+    </div>
+
+
+
+    <script>
+        $(document).ready(function() {
+            $('#prescriptions').dataTable();
+        });
+    </script>
+
+
+</body>
+
+</html>
